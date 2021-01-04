@@ -11,6 +11,7 @@ Docker image for creating GitHub deployments and managing deployment statuses.
     
     # create a deploy
     $ docker run  --rm \
+        -e LS_SERVICE_NAME=hipster-shop
         -e GITHUB_REPO=smithclay/hipster-shop \
         -e GITHUB_REF=master \
         -e SERVICE_ENV=production \

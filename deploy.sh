@@ -22,20 +22,31 @@ deploy() {
           exit
         fi
 
+
+        if [ -z "${LS_SERVICE_NAME-}" ]
+        then
+          echo 'Please set the LS_SERVICE_NAME environment variable - i.e. frontend'
+          exit
+        fi
+
         if [ -z "${SERVICE_ENV-}" ]
         then
           echo 'Please set the SERVICE_ENV environment variable - i.e. production, staging, etc.'
           exit
         fi
 
-        command gh api repos/$GITHUB_REPO/deployments \
+        JSON_PAYLOAD='{"ref": "'$GITHUB_REF'", "environment": "'$SERVICE_ENV'", "description": "Deployment for '$LS_SERVICE_NAME'", "payload": { "service.name": "'$LS_SERVICE_NAME'" } }'
+        command jq -n "$JSON_PAYLOAD" | \
+          gh api repos/$GITHUB_REPO/deployments \
           -H "Accept: application/vnd.github.ant-man-preview+json" \
-          -f ref=$GITHUB_REF -f environment=$SERVICE_ENV | jq .id
+          --input - | jq .id
     elif [ "$1" = "update-status" ]; then
         # error, failure, inactive, in_progress, queued, pending, success
         command gh api repos/$GITHUB_REPO/deployments/$2/statuses \
           -H "Accept: application/vnd.github.flash-preview+json" \
           -f state=$3 | jq .state
+    elif [ "$1" = "list" ]; then
+       command gh api repos/$GITHUB_REPO/deployments
     else
        echo "Invalid arg..."
        echo "usage: $0 [ create | update ]"
