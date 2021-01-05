@@ -18,7 +18,7 @@ deploy() {
     if [ "$1" = "create" ]; then
         if [ -z "${GITHUB_REF-}" ]
         then
-          echo `Please set the GITHUB_REF environment variable.`
+          echo 'Please set the GITHUB_REF environment variable.'
           exit 1
         fi
 
@@ -35,7 +35,7 @@ deploy() {
           exit 1
         fi
 
-        JSON_PAYLOAD='{"ref": "'$GITHUB_REF'", "environment": "'$SERVICE_ENV'", "description": "Deployment for '$LS_SERVICE_NAME'", "payload": { "service.name": "'$LS_SERVICE_NAME'" } }'
+        JSON_PAYLOAD='{"ref": "'$GITHUB_REF'", "environment": "'$SERVICE_ENV'", "description": "Deployment for '$LS_SERVICE_NAME'", "required_contexts": [], "payload": { "service.name": "'$LS_SERVICE_NAME'" } }'
         command jq -n "$JSON_PAYLOAD" | \
           gh api repos/$GITHUB_REPO/deployments \
           -H "Accept: application/vnd.github.ant-man-preview+json" \
