@@ -41,6 +41,12 @@ deploy() {
           -H "Accept: application/vnd.github.ant-man-preview+json" \
           --input - | jq .id
     elif [ "$1" = "update-status" ]; then
+        if [ -z "${2-}" ]
+        then
+          echo 'Please pass a deployment id parameter.'
+          exit 1
+        fi
+
         # error, failure, inactive, in_progress, queued, pending, success
         command gh api repos/$GITHUB_REPO/deployments/$2/statuses \
           -H "Accept: application/vnd.github.flash-preview+json" \
@@ -48,6 +54,11 @@ deploy() {
     elif [ "$1" = "list" ]; then
         command gh api repos/$GITHUB_REPO/deployments
     elif [ "$1" = "delete" ]; then
+        if [ -z "${2-}" ]
+        then
+          echo 'Please pass a deployment id parameter.'
+          exit 1
+        fi
         command gh api -X DELETE repos/$GITHUB_REPO/deployments/$2
     else
        echo "Invalid arg..."
