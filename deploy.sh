@@ -49,8 +49,8 @@ deploy() {
 
         # error, failure, inactive, in_progress, queued, pending, success
         command gh api repos/$GITHUB_REPO/deployments/$2/statuses \
-          -H "Accept: application/vnd.github.flash-preview+json" \
-          -f state=$3 | jq .state
+          -H "Accept: application/vnd.github.ant-man-preview+json" \
+          -f state=$3 -f log_url=$CF_BUILD_URL | jq .state
     elif [ "$1" = "list" ]; then
         command gh api repos/$GITHUB_REPO/deployments
     elif [ "$1" = "delete" ]; then
